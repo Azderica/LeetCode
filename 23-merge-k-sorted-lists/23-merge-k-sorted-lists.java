@@ -11,28 +11,31 @@
 class Solution {
     public ListNode mergeKLists(ListNode[] lists) {
         // exception case
-        if(lists.length == 0)
+        if(lists.length == 0 || lists == null)
             return null;
         
-        // main logic
-        ListNode res = lists[0];
-        for(int i = 1; i < lists.length; i++) {
-            res = mergeTwoLists(res, lists[i]);
+        // initialize
+        ListNode head, p;
+        
+        PriorityQueue<ListNode> pq = new PriorityQueue<>(lists.length, (a, b) -> a.val - b.val);
+        for(int i = 0; i < lists.length; i++) {
+            if (lists[i] != null) {
+                pq.offer(lists[i]);
+            }
         }
         
-        return res;
-    }
-    
-    private ListNode mergeTwoLists(ListNode l1, ListNode l2) {
-        if(l1 == null) return l2;
-        if(l2 == null) return l1;
-        
-        if(l1.val < l2.val) {
-            l1.next = mergeTwoLists(l1.next, l2);
-            return l1;
-        } else {
-            l2.next = mergeTwoLists(l1, l2.next);
-            return l2;
+        p = head = pq.poll();
+        if(head == null) return null;
+        if(p.next != null) pq.offer(p.next);
+        while(!pq.isEmpty()) {
+            ListNode tmp = pq.poll();
+            p.next = tmp;
+            p = tmp;
+            if(p.next != null) {
+                pq.offer(p.next);
+            }
         }
+        p.next = null;
+        return head;
     }
 }
